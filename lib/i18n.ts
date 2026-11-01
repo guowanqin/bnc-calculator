@@ -23,7 +23,7 @@ export interface Dict {
   heroTitle: string;
   heroSub: string;
   perShareUnit: string;
-  perShareUsdSuffix: string;
+  usdPerShareUnit: string;
   formulaLabel: string;
   formulaHoldings: (n: string) => string;
   formulaShares: (n: string) => string;
@@ -86,7 +86,7 @@ export const DICT: Record<Lang, Dict> = {
     heroSub:
       "纳斯达克上市的 BNB 财库公司（Nasdaq: BNC），数字资产财库公司（DAT）代表之一 · 本页只按基本口径计算",
     perShareUnit: "BNB / 股",
-    perShareUsdSuffix: " / 股（按 BNB 实时价）",
+    usdPerShareUnit: "/ 股",
     formulaLabel: "每股含 BNB =",
     formulaHoldings: (n) => `持仓 ${n} BNB`,
     formulaShares: (n) => `基本股数 ${n} 股`,
@@ -153,7 +153,7 @@ export const DICT: Record<Lang, Dict> = {
     heroSub:
       "Nasdaq-listed BNB treasury company (Nasdaq: BNC), a digital asset treasury company (DAT) · Basic-basis figures only on this page",
     perShareUnit: "BNB / share",
-    perShareUsdSuffix: " / share (at live BNB price)",
+    usdPerShareUnit: "/ share",
     formulaLabel: "BNB per share =",
     formulaHoldings: (n) => `Holdings ${n} BNB`,
     formulaShares: (n) => `Basic shares ${n}`,

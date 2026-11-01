@@ -428,12 +428,12 @@ export default function Calculator() {
           <>
             <div className="hero-main">
               <div className="hero-num">
-                {hero.perShare.toFixed(6)}
-                <small>{t.perShareUnit}</small>
+                {hero.perShareUsd !== null ? fmtUsd(hero.perShareUsd) : "—"}
+                <small>{t.usdPerShareUnit}</small>
               </div>
-              <div className="hero-usd">
-                ≈ {hero.perShareUsd !== null ? fmtUsd(hero.perShareUsd) : "—"}
-                <span>{t.perShareUsdSuffix}</span>
+              <div className="hero-bnb">
+                ≈ {hero.perShare.toFixed(6)}
+                <span>{t.perShareUnit}</span>
               </div>
             </div>
             <div className="formula">

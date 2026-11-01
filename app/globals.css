@@ -159,13 +159,13 @@ button {
   margin-left: 6px;
 }
 
-.hero-usd {
+.hero-bnb {
   font-size: clamp(19px, 4vw, 25px);
-  font-weight: 700;
+  font-weight: 600;
   padding-bottom: 6px;
 }
 
-.hero-usd span {
+.hero-bnb span {
   color: var(--muted);
   font-size: 0.62em;
   font-weight: 500;
