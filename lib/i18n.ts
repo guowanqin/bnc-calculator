@@ -4,27 +4,29 @@
  */
 export type Lang = "zh" | "en";
 
-/** 站点级标题（双标的，layout 元数据与默认 document.title） */
+/** 站点级标题（双标的，layout 元数据与默认 document.title）
+ *  关键词结构：站级主词只有「每股含币量」；支柱词 BNC/BNB/HYPE/PURR 财库公司；
+ *  「财库公司」裸词与 DAT 只作背景语义，不进标题主词位；英文走长尾（BNB/HYPE treasury company、mNAV）。 */
 export const SITE_TITLE: Record<Lang, string> = {
-  zh: "每股含币量计算器｜BNC 与 PURR 财库公司：每股含 BNB / HYPE 与池子年化收益率",
-  en: "Crypto-per-Share Calculator | BNC & PURR Treasury Companies: BNB / HYPE per Share & Pool APY",
+  zh: "每股含币量计算器｜BNC 财库公司与 PURR 财库公司：每股含 BNB / HYPE、价差与池子年化收益率",
+  en: "Crypto per Share Calculator | BNB Treasury Company BNC & HYPE Treasury Company PURR: mNAV, Discount & Pool APY",
 };
 
 export const SITE_DESCRIPTION: Record<Lang, string> = {
-  zh: "每股含币量计算器：一站查询两家财库公司的每股含币量——BNC 财库公司（BNB Standard Corp，Nasdaq: BNC）的每股含 BNB（基本口径）与 PURR 财库公司（Hyperliquid Strategies，Nasdaq: PURR）的每股含 HYPE（官方摊薄口径），实时计算 mNAV；并提供 BNCB 池子年化收益率（BSC）与 HYPE 池子年化（HyperEVM）查询，默认按 ±5% 价格区间换算年化，支持全区间与自定义区间、LP 收益测算。透视数字资产财库公司（DAT）的每股加密资产含量。",
-  en: "Crypto-per-share calculator for two treasury companies: BNB per share (basic basis) for the BNC treasury company (BNB Standard Corp, Nasdaq: BNC) and HYPE per share (official diluted basis) for the PURR treasury company (Hyperliquid Strategies, Nasdaq: PURR), with live mNAV — plus BNCB pool APY (BSC) and HYPE pool APY (HyperEVM), shown for a ±5% price range by default, with full-range and custom-range conversion and an LP earnings estimator. See through digital asset treasury companies (DATs) on a per-share basis.",
+  zh: "每股含币量计算器：实时查询两家上市公司的每股含币量——BNC 财库公司（BNB Standard Corp，Nasdaq: BNC，最大的 BNB 财库公司）每股含 BNB（基本口径），与 PURR 财库公司（Hyperliquid Strategies，Nasdaq: PURR，HYPE 财库公司）每股含 HYPE（官方摊薄口径）；含币价对股价的价差、mNAV 折溢价一目了然，并提供 BNCB 池子年化收益率与 HYPE 池子年化收益率查询（默认 ±5% 区间换算，支持全区间、自定义区间与 LP 收益测算）。",
+  en: "An mNAV calculator for BNC and PURR — the BNB treasury company (BNB Standard Corp, Nasdaq: BNC) and the HYPE treasury company (Hyperliquid Strategies, Nasdaq: PURR). Track live BNB per share (basic basis) and HYPE per share (official diluted basis), each stock's discount or premium to its coin value per share, plus BNCB pool APR and HYPE pool APY: shown for a ±5% range by default, with full-range and custom-range conversion and an LP earnings estimator.",
 };
 
 /** 每个标签页的 document.title（随标签与语言切换） */
 export type AssetTab = "bnc" | "hype";
 export const TAB_TITLES: Record<AssetTab, Record<Lang, string>> = {
   bnc: {
-    zh: "BNC 每股含币量计算器｜财库公司 BNB 持仓与 BNCB 池子年化收益率",
-    en: "BNC Crypto-per-Share Calculator | Treasury Company BNB Holdings & BNCB Pool APY",
+    zh: "BNC 财库公司每股含币量计算器｜每股含 BNB、价差 mNAV 与 BNCB 池子年化收益率",
+    en: "BNC mNAV Calculator | BNB Treasury Company: BNB per Share, Discount & BNCB Pool APR",
   },
   hype: {
-    zh: "PURR 每股含 HYPE 计算器｜HYPE 财库公司 Hyperliquid Strategies 与 HYPE 池子年化",
-    en: "PURR HYPE-per-Share Calculator | Hyperliquid Strategies, the HYPE Treasury Company & HYPE Pool APY",
+    zh: "PURR 财库公司每股含 HYPE 计算器｜每股含币量、价差 mNAV 与 HYPE 池子年化收益率",
+    en: "PURR mNAV Calculator | HYPE Treasury Company: HYPE per Share, Discount & HYPE Pool APY",
   },
 };
 
@@ -191,7 +193,7 @@ export const DICT: Record<Lang, Dict> = {
     fetchError: "Failed to load market data. Please refresh and try again.",
     heroTitle: "BNC Crypto per Share · BNB Standard Corp",
     heroSub:
-      "Nasdaq-listed BNB treasury company (Nasdaq: BNC), a digital asset treasury company (DAT) · Basic-basis figures only on this page",
+      "Nasdaq-listed BNB treasury company (Nasdaq: BNC) · Basic-basis figures only on this page · Live BNB per share — the figure behind management's “grow BNB per share” goal",
     perShareUnit: "BNB / share",
     usdPerShareUnit: "/ share",
     formulaLabel: "BNB per share =",

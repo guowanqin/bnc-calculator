@@ -12,40 +12,37 @@ export const metadata: Metadata = {
   title: SITE_TITLE.zh,
   description: SITE_DESCRIPTION.zh,
   keywords: [
-    // 站点级主关键词
+    // 站点级主词（只有一个）
     "每股含币量",
-    "财库公司",
-    // 标的级主关键词
+    "每股含币量计算器",
+    // 标的支柱词
     "BNC 财库公司",
-    "PURR 财库公司",
+    "BNB 财库公司",
     "HYPE 财库公司",
-    // 副关键词
+    "PURR 财库公司",
+    // 副词：每股口径与折溢价指标
+    "每股含 BNB",
     "每股含 HYPE",
-    "Hyperliquid Strategies",
-    "HYPE 财库",
-    "HYPE 池子年化",
-    "BNCB",
-    "BNCB 池子年化收益率",
     "mNAV",
-    "数字资产财库公司",
-    "DAT",
-    "BNB 财库",
-    "BNB Standard",
-    // 英文与补充
-    "BNC",
-    "PURR",
-    "HYPE",
-    "crypto per share",
-    "HYPE per share",
+    "财库公司折价",
+    // 副词：池子年化
+    "BNCB 池子年化收益率",
+    "HYPE 池子年化收益率",
+    // 实体词
+    "BNCB",
+    "Hyperliquid Strategies",
+    "BNB Standard Corp",
+    // 英文长尾（不再以 crypto / digital asset treasury companies 大词为目标）
     "BNB treasury company",
     "HYPE treasury company",
-    "digital asset treasury company",
+    "BNC mNAV",
+    "PURR mNAV",
+    "mNAV calculator for BNC and PURR",
+    "BNB per share",
+    "HYPE per share",
+    "BNCB pool APR",
     "BNCB pool APY",
     "HYPE pool APY",
-    "每股含 BNB",
-    "PancakeSwap",
-    "Uniswap V4",
-    "HyperEVM",
   ],
   openGraph: {
     type: "website",

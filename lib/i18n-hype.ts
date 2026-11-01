@@ -125,7 +125,7 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     fetchError: "Failed to load market data. Please refresh and try again.",
     heroTitle: "PURR HYPE per Share · Hyperliquid Strategies",
     heroSub:
-      "Nasdaq-listed HYPE treasury company (Nasdaq: PURR), a digital asset treasury company (DAT) · Official diluted basis on this page (unlike the BNC page's basic basis)",
+      "Nasdaq-listed HYPE treasury company (Nasdaq: PURR) · Official diluted basis on this page (unlike the BNC page's basic basis) · Live HYPE per share, PURR mNAV and the spread at a glance",
     perShareUnit: "HYPE / share",
     usdPerShareUnit: "/ share",
     formulaLabel: "HYPE per share =",

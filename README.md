@@ -43,7 +43,7 @@
 
 ## SEO
 
-双标的关键词体系：站点级主词「每股含币量 / 财库公司」，标的级主词「BNC 财库公司」「PURR 财库公司 / HYPE 财库公司」，副词「每股含 HYPE、Hyperliquid Strategies、HYPE 财库、HYPE 池子年化、BNCB 池子年化收益率、mNAV、数字资产财库公司 DAT、BNB 财库」等，已写入 title / description / keywords（中英）与 JSON-LD（WebApplication + BNC、HYPE 两套中英 FAQPage，与页面可见 FAQ 一致）；document.title 随标签切换更新。
+关键词体系（2026-11-01 按调研结论调整）：站级主词只有一个「每股含币量」，标的支柱词为「BNC 财库公司」「BNB 财库公司」「HYPE 财库公司」「PURR 财库公司」；「财库公司」裸词与数字资产财库公司 / DAT 降为背景语义，只在正文与 FAQ 中自然出现。英文侧改走长尾（BNB treasury company / HYPE treasury company / BNC mNAV / PURR mNAV / mNAV calculator for BNC and PURR），并埋 BNB per share / HYPE per share 表述；副词含每股含 BNB / 每股含 HYPE、财库公司折价、BNCB 池子年化收益率 / HYPE 池子年化收益率等。以上已写入 title / description / keywords（中英）与 JSON-LD（WebApplication + BNC、HYPE 两套中英 FAQPage，与页面可见 FAQ 一致）；document.title 随标签切换更新。
 
 ## 本地运行
 
