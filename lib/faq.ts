@@ -10,8 +10,8 @@ export const FAQ_ITEMS_ZH: FaqItem[] = [
     a: "财库公司（数字资产财库公司，Digital Asset Treasury Company，简称 DAT）指把加密资产作为核心财库储备持有的上市公司：这类公司把融资所得或自有资金大量配置为比特币、BNB 等加密资产，并以「每股含币量」作为核心估值指标之一。BNC（BNB Standard Corp，纳斯达克代码 BNC）正是这样一家公司——它以持有 BNB 为核心财库策略，按公司披露持有 515,544 枚 BNB，是目前最大的企业级 BNB 财库公司。",
   },
   {
-    q: "全区间年化和全池平均有什么区别？",
-    a: "全池平均是整个池子的手续费除以整个池子的总锁仓量（TVL）算出的平均数；全区间年化是把资金按全价格范围提供流动性时、按当前有效流动性换算出的实际在价内年化。由于手续费只分给价格区间内的流动性，全区间头寸在当前价位的有效流动性被摊薄，实际年化通常明显低于全池平均。页面默认显示全区间口径，全池平均只在卡片小字里作对照。",
+    q: "池子年化为什么默认显示 ±5% 区间？和全池平均有什么区别？",
+    a: "页面上的年化是「在价内年化」：手续费只分给价格区间内的流动性，所以按链上当前有效流动性、针对你选定的价格带换算。默认选 ±5% 区间，也就是当前价上下 5% 的窄带——价格停留在带内时资金效率最高、年化也最高。全池平均则是整个池子的手续费除以总锁仓量（TVL）的平均数，把全池所有流动性混在一起算，通常明显低于 ±5% 区间的在价内年化、高于全区间年化，所以只在卡片小字里作对照。注意 ±5% 是很窄的区间：价格一旦走出区间，手续费收益立即归零，真实年化还要乘上价格停留在区间内的时间占比；想稳一点可以改选更宽的区间或全区间。",
   },
   {
     q: "为什么没有 BNCB/USDC 池？",
@@ -33,8 +33,8 @@ export const FAQ_ITEMS_EN: FaqItem[] = [
     a: "A treasury company — a digital asset treasury company (DAT) — is a listed company that holds crypto assets as its core treasury reserve: it allocates raised or own capital heavily into assets such as Bitcoin or BNB, and is valued largely on its crypto per share. BNC (BNB Standard Corp, Nasdaq: BNC) is exactly that: holding BNB is its core treasury strategy, with 515,544 BNB disclosed, making it the largest corporate BNB treasury company today.",
   },
   {
-    q: "What is the difference between full-range APY and the pool average?",
-    a: "The pool average is simply the pool's total fees divided by its total value locked (TVL). The full-range APY is the actual in-range yield you get when your liquidity is spread across the entire price range, converted using the pool's current active liquidity. Because fees only go to liquidity inside the current price range, a full-range position's effective liquidity at the current price is heavily diluted, so its real APY is usually far below the pool average. This page shows the full-range figure by default; the pool average appears only as a small reference line on each card.",
+    q: "Why is pool APY shown for a ±5% range by default? How does it differ from the pool average?",
+    a: "The APY on this page is an in-range APY: fees only go to liquidity inside the price range, so it is converted from current on-chain active liquidity for the specific band you choose. The default is a ±5% band — 5% above and below the current price — where capital efficiency, and therefore APY, is highest while the price stays inside. The pool average, by contrast, is the pool's total fees divided by its total value locked (TVL): a blended figure across all liquidity in the pool, usually far below the ±5% in-range APY and above the full-range APY, so it appears only as a small reference line on each card. Note that ±5% is a narrow band: once the price leaves it, fee income drops to zero immediately, and your real APY must be multiplied by the share of time the price actually stays in range; pick a wider range or the full range if you prefer a steadier profile.",
   },
   {
     q: "Why is there no BNCB/USDC pool?",

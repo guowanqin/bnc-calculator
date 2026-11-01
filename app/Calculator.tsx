@@ -195,7 +195,7 @@ function PoolCard(props: {
           <span className="k">{t.annualFees}</span>
           <b>{pool.annualFeesUsd !== null ? fmtUsd0(pool.annualFeesUsd) : "—"}</b>
         </div>
-        <div className="row">
+        <div className="row row-bncb">
           <span className="k">{t.bncbSpot}</span>
           <b>{pool.priceUsd !== null ? fmtPrice(pool.priceUsd) : "—"}</b>
         </div>
@@ -256,7 +256,7 @@ export default function Calculator() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [editOpen, setEditOpen] = useState(false);
 
-  const [unified, setUnified] = useState<RangeSel>(FULL_RANGE);
+  const [unified, setUnified] = useState<RangeSel>(presetRange(5));
   const [poolRanges, setPoolRanges] = useState<Record<string, RangeSel>>({});
 
   const [lpPoolKey, setLpPoolKey] = useState("uni-usdt-0025");
@@ -463,7 +463,7 @@ export default function Calculator() {
                   )}
                 </div>
               </div>
-              <div className="stat">
+              <div className="stat stat-bncb">
                 <div className="k">{t.statBncbPrice}</div>
                 <div className="v">
                   {data.bncbPriceUsd !== null ? fmtPrice(data.bncbPriceUsd) : "—"}

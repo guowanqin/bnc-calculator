@@ -10,8 +10,8 @@ export const SITE_TITLE: Record<Lang, string> = {
 };
 
 export const SITE_DESCRIPTION: Record<Lang, string> = {
-  zh: "BNC 每股含币量计算器：实时查询 BNC 财库公司（BNB Standard Corp，Nasdaq: BNC）的每股含 BNB 数量（基本口径）与 mNAV，透视这家 BNB 财库、数字资产财库公司（DAT）的持仓；同时提供 BNCB 池子年化收益率查询（PancakeSwap V3 与 Uniswap V4），支持全区间与自定义价格区间换算、LP 收益测算。",
-  en: "BNC crypto-per-share calculator: live BNB per share (basic basis) and mNAV for BNC, the BNB treasury company (BNB Standard Corp, Nasdaq: BNC) — a digital asset treasury company (DAT) — plus BNCB pool APY across PancakeSwap V3 and Uniswap V4, with full-range and custom-range conversion and an LP earnings estimator.",
+  zh: "BNC 每股含币量计算器：实时查询 BNC 财库公司（BNB Standard Corp，Nasdaq: BNC）的每股含 BNB 数量（基本口径）与 mNAV，透视这家 BNB 财库、数字资产财库公司（DAT）的持仓；同时提供 BNCB 池子年化收益率查询（PancakeSwap V3 与 Uniswap V4），默认按 ±5% 价格区间换算年化，支持全区间与自定义区间、LP 收益测算。",
+  en: "BNC crypto-per-share calculator: live BNB per share (basic basis) and mNAV for BNC, the BNB treasury company (BNB Standard Corp, Nasdaq: BNC) — a digital asset treasury company (DAT) — plus BNCB pool APY across PancakeSwap V3 and Uniswap V4, shown for a ±5% price range by default, with full-range and custom-range conversion and an LP earnings estimator.",
 };
 
 export interface Dict {
@@ -94,7 +94,7 @@ export const DICT: Record<Lang, Dict> = {
     statMnav: "mNAV（BNCB 价 ÷ 调整后 NAV）",
     discount: (p) => `折价 ${p}%`,
     premium: (p) => `溢价 ${p}%`,
-    statBncbPrice: "BNCB 价格（代币化 BNC）",
+    statBncbPrice: "BNCB 价格（BNC 定价基准）",
     statBnbPrice: "BNB 价格",
     editOpen: "编辑披露数据（持仓 / 股数 / 负债）",
     editClose: "收起",
@@ -105,7 +105,7 @@ export const DICT: Record<Lang, Dict> = {
       "默认值：持仓 515,544 枚 BNB、基本股数 41,173,850 股（公司 2026 年披露）、负债约 $16.8M（2026-07-31 披露口径）。修改后立即按基本口径重算，并保存在本机浏览器。",
     poolsTitle: "BNCB 池子年化收益率",
     poolsSub:
-      "默认显示「全区间在价内年化」：按链上当前有效流动性换算的实际年化，与卡片小字的「全池平均」不是一回事（全池平均 = 24h 成交量 × 费率 × 365 ÷ TVL）。先用下方统一设置给所有池子选区间，也可以逐张卡片单独改。",
+      "默认显示「±5% 区间在价内年化」：按链上当前有效流动性、只算当前价上下 5% 价格带换算出的年化，与卡片小字的「全池平均」不是一回事（全池平均 = 24h 成交量 × 费率 × 365 ÷ TVL）。±5% 是很窄的区间：价格停留在带内时资金效率高、年化也高，但价格一出带收益即归零。用下方统一设置可给所有池子换区间（全区间、各预设、自定义），也可以逐张卡片单独改。",
     unifiedLabel: "统一区间设置（应用到所有池子）",
     poolRangeLabel: "本池价格区间（只改这个池）",
     fullRange: "全区间",
@@ -116,10 +116,10 @@ export const DICT: Record<Lang, Dict> = {
     headlineFull: "全区间在价内年化",
     headlineRange: (down, up) => `区间 −${down}% ~ +${up}% · 在价内年化`,
     headlineAvgFallback: "全池平均年化（链上读数暂不可用）",
-    poolAvgLine: (pct) => `全池平均 ${pct}（对照口径，非全区间收益）`,
+    poolAvgLine: (pct) => `全池平均 ${pct}（对照口径，非区间年化）`,
     vol24h: "24h 成交量",
     annualFees: "年化手续费",
-    bncbSpot: "BNCB 现价",
+    bncbSpot: "BNCB 价格（定价基准）",
     bandLabel: "价格带：",
     fullPriceRangeText: "全价格范围",
     effLabel: "资金效率",
@@ -161,7 +161,7 @@ export const DICT: Record<Lang, Dict> = {
     statMnav: "mNAV (BNCB price ÷ adjusted NAV)",
     discount: (p) => `${p}% discount`,
     premium: (p) => `${p}% premium`,
-    statBncbPrice: "BNCB price (tokenized BNC)",
+    statBncbPrice: "BNCB Price (BNC pricing basis)",
     statBnbPrice: "BNB price",
     editOpen: "Edit disclosed figures (holdings / shares / liabilities)",
     editClose: "Collapse",
@@ -172,7 +172,7 @@ export const DICT: Record<Lang, Dict> = {
       "Defaults: 515,544 BNB held, 41,173,850 basic shares (company disclosures, 2026), liabilities ≈ $16.8M (as of 2026-07-31). Edits recalculate on the basic basis immediately and are saved in this browser.",
     poolsTitle: "BNCB Pool APY",
     poolsSub:
-      "Shown by default: the full-range in-range APY — the actual yield converted from current on-chain active liquidity. It is not the same as the 'pool average' in small print on each card (pool average = 24h volume × fee rate × 365 ÷ TVL). Set one range for all pools below, or adjust each card individually.",
+      "Shown by default: the ±5% range in-range APY — the yield converted from current on-chain active liquidity for a price band 5% above and below the current price. It is not the same as the 'pool average' in small print on each card (pool average = 24h volume × fee rate × 365 ÷ TVL). ±5% is a narrow band: capital efficiency and APY are high while the price stays inside, but income drops to zero once it leaves. Set one range for all pools below (full range, presets, or custom), or adjust each card individually.",
     unifiedLabel: "Unified range (applies to all pools)",
     poolRangeLabel: "This pool's range (this pool only)",
     fullRange: "Full range",
@@ -183,10 +183,10 @@ export const DICT: Record<Lang, Dict> = {
     headlineFull: "Full-range in-range APY",
     headlineRange: (down, up) => `Range −${down}% ~ +${up}% · in-range APY`,
     headlineAvgFallback: "Pool-average APY (on-chain data unavailable)",
-    poolAvgLine: (pct) => `Pool average ${pct} (reference only, not full-range yield)`,
+    poolAvgLine: (pct) => `Pool average ${pct} (reference only, not the in-range APY)`,
     vol24h: "24h volume",
     annualFees: "Annualized fees",
-    bncbSpot: "BNCB price",
+    bncbSpot: "BNCB Price (pricing basis)",
     bandLabel: "Price band: ",
     fullPriceRangeText: "Full price range",
     effLabel: "Capital efficiency",
