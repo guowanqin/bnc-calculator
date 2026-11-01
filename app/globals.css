@@ -115,6 +115,38 @@ button {
   cursor: wait;
 }
 
+/* ---------- 标的标签切换 ---------- */
+.tabbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  flex: 1 1 0;
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 11px 10px;
+  font-size: clamp(14px, 3.4vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.tab-btn:hover {
+  border-color: #cbd5e1;
+  color: var(--text);
+}
+
+.tab-btn.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
 /* ---------- Hero ---------- */
 .hero {
   background: linear-gradient(165deg, #ffffff 0%, var(--panel-soft) 75%);

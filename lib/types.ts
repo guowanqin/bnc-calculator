@@ -2,7 +2,7 @@ export interface PoolDef {
   key: string;
   dex: string;
   pair: string;
-  quote: "USDT" | "WBNB";
+  quote: "USDT" | "WBNB" | "USDC" | "UBTC";
   feePercent: number;
   /** V3: 池合约地址；V4: poolId（bytes32） */
   address: string;
@@ -38,5 +38,18 @@ export interface MarketData {
   source: string;
   bnbPriceUsd: number | null;
   bncbPriceUsd: number | null;
+  pools: PoolMarket[];
+}
+
+/** HYPE 标签页（PURR / Hyperliquid Strategies）行情 */
+export interface HypeMarketData {
+  fetchedAt: string;
+  source: string;
+  /** HYPE 实时价（美元，GT hyperevm 网络 WHYPE 价） */
+  hypePriceUsd: number | null;
+  /** PURR 纳斯达克收盘价（Stooq 取到时才有；取不到为 null，页面用可编辑字段） */
+  purrCloseUsd: number | null;
+  /** PURR 收盘价对应的交易日期（YYYY-MM-DD） */
+  purrCloseDate: string | null;
   pools: PoolMarket[];
 }

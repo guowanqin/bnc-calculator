@@ -4,14 +4,28 @@
  */
 export type Lang = "zh" | "en";
 
+/** 站点级标题（双标的，layout 元数据与默认 document.title） */
 export const SITE_TITLE: Record<Lang, string> = {
-  zh: "BNC 每股含币量计算器｜财库公司 BNB 持仓与 BNCB 池子年化收益率",
-  en: "BNC Crypto-per-Share Calculator | Treasury Company BNB Holdings & BNCB Pool APY",
+  zh: "每股含币量计算器｜BNC 与 PURR 财库公司：每股含 BNB / HYPE 与池子年化收益率",
+  en: "Crypto-per-Share Calculator | BNC & PURR Treasury Companies: BNB / HYPE per Share & Pool APY",
 };
 
 export const SITE_DESCRIPTION: Record<Lang, string> = {
-  zh: "BNC 每股含币量计算器：实时查询 BNC 财库公司（BNB Standard Corp，Nasdaq: BNC）的每股含 BNB 数量（基本口径）与 mNAV，透视这家 BNB 财库、数字资产财库公司（DAT）的持仓；同时提供 BNCB 池子年化收益率查询（PancakeSwap V3 与 Uniswap V4），默认按 ±5% 价格区间换算年化，支持全区间与自定义区间、LP 收益测算。",
-  en: "BNC crypto-per-share calculator: live BNB per share (basic basis) and mNAV for BNC, the BNB treasury company (BNB Standard Corp, Nasdaq: BNC) — a digital asset treasury company (DAT) — plus BNCB pool APY across PancakeSwap V3 and Uniswap V4, shown for a ±5% price range by default, with full-range and custom-range conversion and an LP earnings estimator.",
+  zh: "每股含币量计算器：一站查询两家财库公司的每股含币量——BNC 财库公司（BNB Standard Corp，Nasdaq: BNC）的每股含 BNB（基本口径）与 PURR 财库公司（Hyperliquid Strategies，Nasdaq: PURR）的每股含 HYPE（官方摊薄口径），实时计算 mNAV；并提供 BNCB 池子年化收益率（BSC）与 HYPE 池子年化（HyperEVM）查询，默认按 ±5% 价格区间换算年化，支持全区间与自定义区间、LP 收益测算。透视数字资产财库公司（DAT）的每股加密资产含量。",
+  en: "Crypto-per-share calculator for two treasury companies: BNB per share (basic basis) for the BNC treasury company (BNB Standard Corp, Nasdaq: BNC) and HYPE per share (official diluted basis) for the PURR treasury company (Hyperliquid Strategies, Nasdaq: PURR), with live mNAV — plus BNCB pool APY (BSC) and HYPE pool APY (HyperEVM), shown for a ±5% price range by default, with full-range and custom-range conversion and an LP earnings estimator. See through digital asset treasury companies (DATs) on a per-share basis.",
+};
+
+/** 每个标签页的 document.title（随标签与语言切换） */
+export type AssetTab = "bnc" | "hype";
+export const TAB_TITLES: Record<AssetTab, Record<Lang, string>> = {
+  bnc: {
+    zh: "BNC 每股含币量计算器｜财库公司 BNB 持仓与 BNCB 池子年化收益率",
+    en: "BNC Crypto-per-Share Calculator | Treasury Company BNB Holdings & BNCB Pool APY",
+  },
+  hype: {
+    zh: "PURR 每股含 HYPE 计算器｜HYPE 财库公司 Hyperliquid Strategies 与 HYPE 池子年化",
+    en: "PURR HYPE-per-Share Calculator | Hyperliquid Strategies, the HYPE Treasury Company & HYPE Pool APY",
+  },
 };
 
 export interface Dict {

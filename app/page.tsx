@@ -1,5 +1,5 @@
-import Calculator from "./Calculator";
+import Shell from "./Shell";
 
 export default function Page() {
-  return <Calculator />;
+  return <Shell />;
 }
