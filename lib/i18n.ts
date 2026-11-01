@@ -47,6 +47,12 @@ export interface Dict {
   premium: (p: string) => string;
   statBncbPrice: string;
   statBnbPrice: string;
+  spreadTitle: string;
+  spreadCoinValue: string;
+  spreadStockPrice: string;
+  spreadResult: string;
+  spreadAtPar: string;
+  spreadNote: string;
   editOpen: string;
   editClose: string;
   fieldHoldings: string;
@@ -110,6 +116,13 @@ export const DICT: Record<Lang, Dict> = {
     premium: (p) => `溢价 ${p}%`,
     statBncbPrice: "BNCB 价格（BNC 定价基准）",
     statBnbPrice: "BNB 价格",
+    spreadTitle: "价差",
+    spreadCoinValue: "含币价",
+    spreadStockPrice: "当前股价（BNCB）",
+    spreadResult: "价差",
+    spreadAtPar: "平价",
+    spreadNote:
+      "价差为含币价与股价的账面差额；财库公司股票不可按含币量赎回，折价不等于无风险套利。",
     editOpen: "编辑披露数据（持仓 / 股数 / 负债）",
     editClose: "收起",
     fieldHoldings: "BNB 持仓（枚，公司披露）",
@@ -177,6 +190,13 @@ export const DICT: Record<Lang, Dict> = {
     premium: (p) => `${p}% premium`,
     statBncbPrice: "BNCB Price (BNC pricing basis)",
     statBnbPrice: "BNB price",
+    spreadTitle: "Spread",
+    spreadCoinValue: "Coin value per share",
+    spreadStockPrice: "Current share price (BNCB)",
+    spreadResult: "Spread",
+    spreadAtPar: "At par",
+    spreadNote:
+      "The spread is the book difference between the coin value per share and the share price; treasury-company shares cannot be redeemed for the underlying coins, so a discount is not a risk-free arbitrage.",
     editOpen: "Edit disclosed figures (holdings / shares / liabilities)",
     editClose: "Collapse",
     fieldHoldings: "BNB holdings (company-disclosed)",

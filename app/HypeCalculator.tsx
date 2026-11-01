@@ -6,7 +6,7 @@ import { presetRange, lvForRange, type RangeSel } from "@/lib/range";
 import { FAQ_HYPE_EN, FAQ_HYPE_ZH } from "@/lib/faq-hype";
 import { DICT_HYPE } from "@/lib/i18n-hype";
 import type { Lang } from "@/lib/i18n";
-import { PoolCard, RangeControl, fmtInt, fmtPrice, fmtUsd } from "./pool-ui";
+import { PoolCard, RangeControl, SpreadCard, fmtInt, fmtPrice, fmtUsd } from "./pool-ui";
 
 const parseNum = (s: string) => parseFloat(s.replace(/,/g, "")) || 0;
 
@@ -217,6 +217,12 @@ export default function HypeCalculator(props: {
                 <span>{t.perShareUnit}</span>
               </div>
             </div>
+            <SpreadCard
+              coinValue={hero.perShareUsd}
+              stockPrice={purrPrice > 0 ? purrPrice : null}
+              stockLabel={t.spreadStockPricePurr(purrDate)}
+              t={t}
+            />
             <div className="formula">
               <span>{t.formulaLabel}</span>
               <span className="chip">{t.formulaHoldings(fmtInt(holdings, locale))}</span>

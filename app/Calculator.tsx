@@ -5,7 +5,7 @@ import type { MarketData } from "@/lib/types";
 import { presetRange, lvForRange, type RangeSel } from "@/lib/range";
 import { FAQ_ITEMS_EN, FAQ_ITEMS_ZH } from "@/lib/faq";
 import { DICT, type Lang } from "@/lib/i18n";
-import { PoolCard, RangeControl, fmtInt, fmtPrice, fmtUsd } from "./pool-ui";
+import { PoolCard, RangeControl, SpreadCard, fmtInt, fmtPrice, fmtUsd } from "./pool-ui";
 
 const parseNum = (s: string) => parseFloat(s.replace(/,/g, "")) || 0;
 
@@ -185,6 +185,12 @@ export default function Calculator(props: {
                 <span>{t.perShareUnit}</span>
               </div>
             </div>
+            <SpreadCard
+              coinValue={hero.perShareUsd}
+              stockPrice={data.bncbPriceUsd}
+              stockLabel={t.spreadStockPrice}
+              t={t}
+            />
             <div className="formula">
               <span>{t.formulaLabel}</span>
               <span className="chip">{t.formulaHoldings(fmtInt(holdings, locale))}</span>

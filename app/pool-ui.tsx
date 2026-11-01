@@ -25,6 +25,70 @@ export const fmtPct = (frac: number | null, d = 1) =>
   frac === null || !Number.isFinite(frac) ? "—" : (frac * 100).toFixed(d) + "%";
 export const fmtPrice = (n: number) => fmtUsd(n, n < 10 ? 3 : 2);
 
+/* ---------------- 价差卡（BNC / HYPE 两页共用） ----------------
+   含币价（每股含币量 × 币实时价，毛口径，不扣负债/税项）− 当前股价 = 价差 */
+export function SpreadCard(props: {
+  coinValue: number | null;
+  stockPrice: number | null;
+  stockLabel: string;
+  t: Dict;
+}) {
+  const { coinValue, stockPrice, stockLabel, t } = props;
+  const spread =
+    coinValue !== null && stockPrice !== null ? coinValue - stockPrice : null;
+  const pct =
+    spread !== null && coinValue !== null && coinValue > 0
+      ? (spread / coinValue) * 100
+      : null;
+  const kind =
+    pct === null ? "na" : pct > 0.05 ? "disc" : pct < -0.05 ? "prem" : "par";
+  const fmtSigned = (n: number) => (n < 0 ? "−" + fmtUsd(-n) : fmtUsd(n));
+  return (
+    <div className={`spread-card spread-${kind}`}>
+      <div className="spread-title">{t.spreadTitle}</div>
+      <div className="spread-eq">
+        <div className="spread-term">
+          <div className="spread-k">{t.spreadCoinValue}</div>
+          <div className="spread-v">
+            {coinValue !== null ? fmtUsd(coinValue) : "—"}
+            <small>{t.usdPerShareUnit}</small>
+          </div>
+        </div>
+        <div className="spread-op">−</div>
+        <div className="spread-term">
+          <div className="spread-k">{stockLabel}</div>
+          <div className="spread-v">
+            {stockPrice !== null ? fmtUsd(stockPrice) : "—"}
+            <small>{t.usdPerShareUnit}</small>
+          </div>
+        </div>
+        <div className="spread-op">=</div>
+        <div className="spread-term">
+          <div className="spread-k">{t.spreadResult}</div>
+          <div className="spread-v spread-big">
+            {spread !== null ? fmtSigned(spread) : "—"}
+            <small>{t.usdPerShareUnit}</small>
+            {pct !== null && kind === "disc" && (
+              <span className="spread-badge badge-disc">
+                {t.discount(Math.abs(pct).toFixed(1))}
+              </span>
+            )}
+            {pct !== null && kind === "prem" && (
+              <span className="spread-badge badge-prem">
+                {t.premium(Math.abs(pct).toFixed(1))}
+              </span>
+            )}
+            {pct !== null && kind === "par" && (
+              <span className="spread-badge badge-par">{t.spreadAtPar}</span>
+            )}
+          </div>
+        </div>
+      </div>
+      <p className="spread-note">{t.spreadNote}</p>
+    </div>
+  );
+}
+
 /* ---------------- 区间选择器 ---------------- */
 function isPreset(sel: RangeSel) {
   return !sel.full && sel.down === sel.up && PRESET_PCTS.includes(sel.down);

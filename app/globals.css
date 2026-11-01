@@ -1,9 +1,9 @@
 :root {
-  --bg: #ffffff;
-  --panel: #ffffff;
-  --panel-2: #f3f5f8;
-  --panel-soft: #f8fafc;
-  --border: #e2e7ee;
+  --bg: #faf6ed;
+  --panel: #fffdf8;
+  --panel-2: #f3eddc;
+  --panel-soft: #f7f1e2;
+  --border: #e6dbc2;
   --text: #111827;
   --muted: #4b5563;
   --faint: #64748b;
@@ -135,7 +135,7 @@ button {
 }
 
 .tab-btn:hover {
-  border-color: #cbd5e1;
+  border-color: #d9cdae;
   color: var(--text);
 }
 
@@ -144,17 +144,17 @@ button {
   border-color: var(--accent);
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 1px 3px rgba(101, 82, 34, 0.18);
 }
 
 /* ---------- Hero ---------- */
 .hero {
-  background: linear-gradient(165deg, #ffffff 0%, var(--panel-soft) 75%);
+  background: linear-gradient(165deg, var(--panel) 0%, var(--panel-soft) 75%);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 28px 28px 22px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 1px 3px rgba(101, 82, 34, 0.07);
 }
 
 .hero h1 {
@@ -275,6 +275,113 @@ button {
   color: var(--accent);
 }
 
+/* ---------- 价差卡 ---------- */
+.spread-card {
+  margin-top: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px 10px;
+}
+
+.spread-card.spread-disc {
+  border-color: rgba(5, 150, 105, 0.5);
+  background: rgba(5, 150, 105, 0.05);
+}
+
+.spread-card.spread-prem {
+  border-color: rgba(220, 38, 38, 0.42);
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.spread-title {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.spread-eq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.spread-term .spread-k {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.spread-v {
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.spread-v small {
+  font-size: 0.6em;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.spread-op {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--faint);
+}
+
+.spread-big {
+  font-size: clamp(32px, 7vw, 46px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.spread-disc .spread-big {
+  color: var(--green);
+}
+
+.spread-prem .spread-big {
+  color: var(--red);
+}
+
+.spread-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  padding: 3px 11px;
+  border-radius: 999px;
+  margin-left: 10px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.badge-disc {
+  background: rgba(5, 150, 105, 0.13);
+  color: #047857;
+}
+
+.badge-prem {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+
+.badge-par {
+  background: var(--panel-2);
+  color: var(--muted);
+}
+
+.spread-note {
+  font-size: 12px;
+  color: var(--faint);
+  line-height: 1.6;
+  margin: 10px 0 2px;
+}
+
 .edit-panel {
   margin-top: 16px;
   border-top: 1px dashed var(--border);
@@ -364,7 +471,7 @@ button {
 
 .chip-btn:hover {
   color: var(--text);
-  border-color: #cbd5e1;
+  border-color: #d9cdae;
 }
 
 .chip-btn.on {
@@ -424,7 +531,7 @@ button {
   border-radius: var(--radius);
   padding: 18px;
   min-width: 0;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 3px rgba(101, 82, 34, 0.06);
 }
 
 .pool-head {
@@ -490,7 +597,7 @@ button {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  border-bottom: 1px dashed #edf0f4;
+  border-bottom: 1px dashed #efe6cf;
   padding-bottom: 5px;
 }
 
@@ -613,5 +720,14 @@ button {
   }
   .pool-card {
     padding: 15px;
+  }
+  .spread-card {
+    padding: 12px 14px 8px;
+  }
+  .spread-eq {
+    gap: 6px 10px;
+  }
+  .spread-v {
+    font-size: 18px;
   }
 }

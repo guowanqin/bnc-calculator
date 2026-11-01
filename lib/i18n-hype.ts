@@ -10,6 +10,8 @@ export interface HypeDict extends Dict {
   fieldCash: string;
   fieldDeferredTax: string;
   fieldPurrPrice: string;
+  /** 价差卡上的股价标签（带收盘日期，如「当前股价（PURR · 收盘价 2026-10-30）」） */
+  spreadStockPricePurr: (date: string) => string;
   /** PURR 取价方式说明（无代币化股票、用收盘价） */
   purrNote: string;
   /** HYPE 原生质押参考（小字） */
@@ -38,6 +40,14 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     premium: (p) => `溢价 ${p}%`,
     statBncbPrice: "HYPE 价格（实时，WHYPE 池价）",
     statBnbPrice: "PURR 股价（纳斯达克收盘价）",
+    spreadTitle: "价差",
+    spreadCoinValue: "含币价",
+    spreadStockPrice: "当前股价（PURR）",
+    spreadStockPricePurr: (date) => `当前股价（PURR · 收盘价 ${date}）`,
+    spreadResult: "价差",
+    spreadAtPar: "平价",
+    spreadNote:
+      "价差为含币价与股价的账面差额；财库公司股票不可按含币量赎回，折价不等于无风险套利。",
     editOpen: "编辑披露数据（持仓 / 股数 / 现金 / 递延税负债 / PURR 股价）",
     editClose: "收起",
     fieldHoldings: "HYPE 持仓（枚，公司看板口径）",
@@ -116,6 +126,14 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     premium: (p) => `${p}% premium`,
     statBncbPrice: "HYPE Price (live, WHYPE pool price)",
     statBnbPrice: "PURR stock price (Nasdaq close)",
+    spreadTitle: "Spread",
+    spreadCoinValue: "Coin value per share",
+    spreadStockPrice: "Current share price (PURR)",
+    spreadStockPricePurr: (date) => `Current share price (PURR · close ${date})`,
+    spreadResult: "Spread",
+    spreadAtPar: "At par",
+    spreadNote:
+      "The spread is the book difference between the coin value per share and the share price; treasury-company shares cannot be redeemed for the underlying coins, so a discount is not a risk-free arbitrage.",
     editOpen:
       "Edit disclosed figures (holdings / shares / cash / deferred tax / PURR price)",
     editClose: "Collapse",
