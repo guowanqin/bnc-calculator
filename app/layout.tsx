@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { FAQ_ITEMS_EN, FAQ_ITEMS_ZH } from "@/lib/faq";
 import { FAQ_HYPE_EN, FAQ_HYPE_ZH } from "@/lib/faq-hype";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/i18n";
-
-// TODO: 上线后把占位域名换成正式域名
-const SITE_URL = "https://example.com";
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  // 单页双标签结构：canonical 指向主域名首页（HYPE 页为 /?tab=hype，已列入 sitemap）
+  alternates: { canonical: SITE_URL + "/" },
   title: SITE_TITLE.zh,
   description: SITE_DESCRIPTION.zh,
   keywords: [

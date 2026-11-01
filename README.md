@@ -60,7 +60,7 @@ npm run start   # 生产模式启动
 
 1. 把本仓库推到 GitHub。
 2. 打开 [vercel.com/new](https://vercel.com/new) 导入该仓库，Framework Preset 自动识别为 Next.js，其余保持默认（Build Command `next build`、Output 自动），点 Deploy。
-3. 部署完成后把正式域名填回 `app/layout.tsx` 顶部的 `SITE_URL`（目前为占位 `https://example.com`），og:url 等元数据即生效；如绑定自定义域名，在 Vercel 项目 Settings → Domains 添加并按提示改 DNS。
+3. 正式域名为 **https://pershare.cc**（www 版重定向到主域名）：已写入 `lib/i18n.ts` 的 `SITE_URL`，canonical、og:url、JSON-LD、sitemap（`app/sitemap.ts`）与 robots 均以此为准；在 Vercel 项目 Settings → Domains 添加 pershare.cc 并按提示改 DNS。
 
 也可以用 CLI：`npm i -g vercel && vercel --prod`。
 

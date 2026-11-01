@@ -4,6 +4,9 @@
  */
 export type Lang = "zh" | "en";
 
+/** 站点正式网址（canonical、OG、JSON-LD、sitemap、robots 的单一数据源）；www 版重定向到主域名 */
+export const SITE_URL = "https://pershare.cc";
+
 /** 站点级标题（双标的，layout 元数据与默认 document.title）
  *  关键词结构：站级主词只有「每股含币量」；支柱词 BNC/BNB/HYPE/PURR 财库公司；
  *  「财库公司」裸词与 DAT 只作背景语义，不进标题主词位；英文走长尾（BNB/HYPE treasury company、mNAV）。 */
