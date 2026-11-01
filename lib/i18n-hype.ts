@@ -12,6 +12,10 @@ export interface HypeDict extends Dict {
   fieldPurrPrice: string;
   /** 价差卡上的股价标签（带收盘日期，如「当前股价（PURR · 收盘价 2026-10-30）」） */
   spreadStockPricePurr: (date: string) => string;
+  /** 价差卡上的股价标签（用户手动输入时） */
+  spreadStockPricePurrManual: string;
+  /** 股价统计格小字（用户手动输入时） */
+  purrManualTag: string;
   /** PURR 取价方式说明（无代币化股票、用收盘价） */
   purrNote: string;
   /** HYPE 原生质押参考（小字） */
@@ -44,10 +48,17 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     spreadCoinValue: "含币价",
     spreadStockPrice: "当前股价（PURR）",
     spreadStockPricePurr: (date) => `当前股价（PURR · 收盘价 ${date}）`,
+    spreadStockPricePurrManual: "当前股价（PURR · 手动输入）",
+    purrManualTag: "手动输入",
     spreadResult: "价差",
     spreadAtPar: "平价",
     spreadNote:
       "价差为含币价与股价的账面差额；财库公司股票不可按含币量赎回，折价不等于无风险套利。",
+    spreadWordDisc: "折价",
+    spreadWordPrem: "溢价",
+    spreadDiscRate: (p) => `折价率 ${p}%`,
+    spreadPremRate: (p) => `溢价率 ${p}%`,
+    spreadLegend: "折价＝股价低于每股含币价值；溢价＝股价高于每股含币价值。",
     editOpen: "编辑披露数据（持仓 / 股数 / 现金 / 递延税负债 / PURR 股价）",
     editClose: "收起",
     fieldHoldings: "HYPE 持仓（枚，公司看板口径）",
@@ -55,15 +66,15 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     fieldLiabilities: "负债（美元）",
     fieldCash: "现金（美元）",
     fieldDeferredTax: "递延税负债（美元）",
-    fieldPurrPrice: "PURR 股价（美元，纳斯达克收盘价，可编辑）",
+    fieldPurrPrice: "PURR 股价（美元，手动兜底值，可编辑）",
     editHint:
-      "默认值：持仓 38,800,000 枚 HYPE、完全摊薄股数 301,100,000 股（公司官方看板口径，2026-10-22，看板周更）；现金 $132.6M（2026-08-19）、递延税负债约 $194M，公司无有息负债；PURR 股价预填 $11.01（2026-10-30 收盘）。修改后立即按摊薄口径重算，并保存在本机浏览器。",
+      "默认值：持仓 38,900,000 枚 HYPE、完全摊薄股数 302,700,000 股（公司官方看板口径，2026-10-29，看板周更；摊薄股数由看板按库藏股法随股价计算）；现金 $132.6M（2026-08-19）、递延税负债约 $194M，公司无有息负债；PURR 股价由服务端经 Yahoo Finance 自动获取最近收盘价，本字段为手动兜底值（预填 $11.01 = 2026-10-30 收盘），手动修改后以本字段为准。修改后立即按摊薄口径重算，并保存在本机浏览器。",
     caliberNote:
-      "口径标注：持仓与股数采用公司官方看板口径（hypestrat.xyz，2026-10-22）；本页采用官方摊薄口径——PURR 基本股数 197.8M 股为 2026-08-23 的旧数字且公司持续增发，故不采用。",
+      "口径标注：持仓与股数采用公司官方看板口径（hypestrat.xyz，2026-10-29）；本页采用官方摊薄口径——PURR 基本股数 197.8M 股为 2026-08-23 的旧数字且公司持续增发，故不采用。",
     secNote:
       "并存提示：SEC 披露追踪口径的持仓为 29.28M 枚（截至 2026-08-27），与看板口径时点不同，详见下方常见问题。",
     purrNote:
-      "取价说明：PURR 没有 BNCB 式的高流动性代币化股票（无 bStocks / xStocks；Ondo 的 PURRon 市值仅约 $1.3K 不可用），故 mNAV 用纳斯达克收盘价计算并标注日期，不是实时价；Bitget 站内 rPURR（约 $11）仅作参考。",
+      "取价说明：PURR 没有 BNCB 式的高流动性代币化股票（无 bStocks / xStocks；Ondo 的 PURRon 市值仅约 $1.3K 不可用），故 mNAV 与价差用纳斯达克收盘价计算：服务端经 Yahoo Finance 自动获取最近一个交易日的收盘价并标注日期（上方日期即收盘日期），不是实时价；自动取价失败、或你在编辑区手动改过股价时，改用手动值并标注「手动输入」。Bitget 站内 rPURR（约 $11）仅作参考。",
     stakingNote: "参考：HYPE 原生质押年化 ≈ 2.3%（浮动），与下方池子年化不是一回事。",
     poolsTitle: "HYPE 池子年化（HyperEVM）",
     poolsSub:
@@ -103,7 +114,7 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     footerSource:
       "数据来源：GeckoTerminal（hyperevm 网络）行情与 HyperEVM 链上读数（Project X、HyperSwap V3 池合约），服务端缓存约 5 分钟。WHYPE 合约：0x5555555555555555555555555555555555555555。注意：Hyperliquid 链上的同名 meme 代币 PURR 与上市公司 Hyperliquid Strategies（PURR）无关，本页不使用其数据。",
     footerDisclaimer:
-      "口径说明：每股含 HYPE 按公司看板口径（2026-10-22）与官方摊薄口径计算，SEC 披露追踪口径（29.28M 枚，2026-08-27）并存提示；PURR 股价为纳斯达克收盘价、非实时。区间年化为「价格停留在区间内」的理论值，未计无常损失；单日成交量年化波动极大。本页仅供信息参考，不构成投资建议。",
+      "口径说明：每股含 HYPE 按公司看板口径（2026-10-29）与官方摊薄口径计算，SEC 披露追踪口径（29.28M 枚，2026-08-27）并存提示；PURR 股价为经 Yahoo Finance 获取的纳斯达克最近收盘价、非实时。区间年化为「价格停留在区间内」的理论值，未计无常损失；单日成交量年化波动极大。本页仅供信息参考，不构成投资建议。",
   },
   en: {
     brand: "HYPE CALCULATOR",
@@ -130,10 +141,18 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     spreadCoinValue: "Coin value per share",
     spreadStockPrice: "Current share price (PURR)",
     spreadStockPricePurr: (date) => `Current share price (PURR · close ${date})`,
+    spreadStockPricePurrManual: "Current share price (PURR · manual entry)",
+    purrManualTag: "manual entry",
     spreadResult: "Spread",
     spreadAtPar: "At par",
     spreadNote:
       "The spread is the book difference between the coin value per share and the share price; treasury-company shares cannot be redeemed for the underlying coins, so a discount is not a risk-free arbitrage.",
+    spreadWordDisc: "Discount",
+    spreadWordPrem: "Premium",
+    spreadDiscRate: (p) => `Discount rate ${p}%`,
+    spreadPremRate: (p) => `Premium rate ${p}%`,
+    spreadLegend:
+      "Discount = the share price is below the coin value per share; premium = the share price is above the coin value per share.",
     editOpen:
       "Edit disclosed figures (holdings / shares / cash / deferred tax / PURR price)",
     editClose: "Collapse",
@@ -142,15 +161,15 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     fieldLiabilities: "Liabilities (USD)",
     fieldCash: "Cash (USD)",
     fieldDeferredTax: "Deferred tax liability (USD)",
-    fieldPurrPrice: "PURR stock price (USD, Nasdaq close, editable)",
+    fieldPurrPrice: "PURR stock price (USD, manual fallback, editable)",
     editHint:
-      "Defaults: 38,800,000 HYPE held and 301,100,000 fully diluted shares (company dashboard basis, 2026-10-22, updated weekly); cash $132.6M (2026-08-19), deferred tax liability ≈ $194M, no interest-bearing debt; PURR price prefilled at $11.01 (2026-10-30 close). Edits recalculate on the diluted basis immediately and are saved in this browser.",
+      "Defaults: 38,900,000 HYPE held and 302,700,000 fully diluted shares (company dashboard basis, 2026-10-29, updated weekly; the diluted count is computed by the dashboard with the treasury method and moves with the share price); cash $132.6M (2026-08-19), deferred tax liability ≈ $194M, no interest-bearing debt; the PURR price is fetched automatically from Yahoo Finance (latest close) — this field is the manual fallback (prefilled at $11.01, the 2026-10-30 close) and takes over once you edit it. Edits recalculate on the diluted basis immediately and are saved in this browser.",
     caliberNote:
-      "Basis note: holdings and share count use the company's official dashboard figures (hypestrat.xyz, 2026-10-22), and this page uses the official diluted basis — PURR's basic share count of 197.8M dates from 2026-08-23 and is stale amid ongoing issuance, so it is not used.",
+      "Basis note: holdings and share count use the company's official dashboard figures (hypestrat.xyz, 2026-10-29), and this page uses the official diluted basis — PURR's basic share count of 197.8M dates from 2026-08-23 and is stale amid ongoing issuance, so it is not used.",
     secNote:
       "Also note: the SEC-filing-tracked holdings figure is 29.28M HYPE (as of 2026-08-27), a different date from the dashboard basis — see the FAQ below.",
     purrNote:
-      "Pricing note: PURR has no liquid tokenized stock like BNCB (no bStocks / xStocks listing; Ondo's PURRon has only ≈ $1.3K market cap and is unusable), so mNAV uses the Nasdaq closing price, labeled with its date — not a live price. Bitget's in-platform rPURR (≈ $11) is for reference only.",
+      "Pricing note: PURR has no liquid tokenized stock like BNCB (no bStocks / xStocks listing; Ondo's PURRon has only ≈ $1.3K market cap and is unusable), so mNAV and the spread use the Nasdaq closing price: the server fetches the most recent trading day's close via Yahoo Finance and labels it with its date (the date above is the close date) — not a live price. If the automatic fetch fails, or you edit the price field yourself, the manual value is used instead and labeled “manual entry”. Bitget's in-platform rPURR (≈ $11) is for reference only.",
     stakingNote:
       "Reference: native HYPE staking yields ≈ 2.3% APY (variable) — a different thing from the pool APYs below.",
     poolsTitle: "HYPE Pool APY (HyperEVM)",
@@ -191,6 +210,6 @@ export const DICT_HYPE: Record<Lang, HypeDict> = {
     footerSource:
       "Data sources: GeckoTerminal (hyperevm network) market data and HyperEVM on-chain reads (Project X and HyperSwap V3 pool contracts), cached server-side for about 5 minutes. WHYPE contract: 0x5555555555555555555555555555555555555555. Note: the meme token also named PURR on Hyperliquid is unrelated to the listed company Hyperliquid Strategies (PURR); this page does not use its data.",
     footerDisclaimer:
-      "Methodology: HYPE per share uses the company dashboard basis (2026-10-22) and the official diluted basis; the SEC-filing-tracked figure (29.28M HYPE, 2026-08-27) is shown alongside. The PURR stock price is a Nasdaq close, not live. Range APYs are theoretical values assuming the price stays in range, before impermanent loss; annualizing a single day's volume is highly volatile. For information only — not investment advice.",
+      "Methodology: HYPE per share uses the company dashboard basis (2026-10-29) and the official diluted basis; the SEC-filing-tracked figure (29.28M HYPE, 2026-08-27) is shown alongside. The PURR stock price is the latest Nasdaq close fetched via Yahoo Finance, not live. Range APYs are theoretical values assuming the price stays in range, before impermanent loss; annualizing a single day's volume is highly volatile. For information only — not investment advice.",
   },
 };

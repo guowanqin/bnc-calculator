@@ -292,17 +292,70 @@ async function readAllChains(): Promise<(ChainRead | null)[]> {
   });
 }
 
-/* ---------------- PURR 股价：Stooq 免费 CSV（尽力而为） ---------------- */
+/* ---------------- PURR 股价：Yahoo Finance 最近收盘价（Stooq 兜底） ---------------- */
+
+interface PurrClose {
+  price: number;
+  /** 交易日期（America/New_York，YYYY-MM-DD） */
+  date: string;
+}
+
+/** Yahoo chart 的 bar 时间戳（秒）→ 纽约交易日 YYYY-MM-DD */
+function nyDateOf(unixSeconds: number): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date(unixSeconds * 1000));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
 
 /**
- * Stooq 日线 CSV：https://stooq.com/q/l/?s=purr.us&f=sd2t2ohlcv&h&e=csv
- * 2026-11-01 实测：该端点对任意代码（含 AAPL）均返回错误页，取不到数；
- * 此处仍保留严格校验的尝试，取不到返回 null，页面改用可编辑字段（预填收盘价）。
+ * Yahoo Finance chart 接口（query1/query2）：取最近一个交易日的收盘价与日期。
+ * 2026-11-01 实测可用：返回最近收盘 $11.01（2026-10-30），与纳斯达克收盘一致。
  */
-async function fetchPurrClose(): Promise<{
-  price: number;
-  date: string;
-} | null> {
+async function fetchPurrCloseYahoo(host: string): Promise<PurrClose | null> {
+  const r = await fetch(
+    `https://${host}/v8/finance/chart/PURR?interval=1d&range=5d`,
+    {
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        accept: "application/json",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    },
+  );
+  if (!r.ok) return null;
+  const j = (await r.json()) as {
+    chart?: {
+      result?: Array<{
+        timestamp?: number[];
+        indicators?: { quote?: Array<{ close?: (number | null)[] }> };
+      }> | null;
+    };
+  };
+  const res = j.chart?.result?.[0];
+  const ts = res?.timestamp ?? [];
+  const closes = res?.indicators?.quote?.[0]?.close ?? [];
+  for (let i = closes.length - 1; i >= 0; i--) {
+    const c = closes[i];
+    if (typeof c === "number" && Number.isFinite(c) && c > 0 && ts[i]) {
+      return { price: Math.round(c * 100) / 100, date: nyDateOf(ts[i]) };
+    }
+  }
+  return null;
+}
+
+/**
+ * Stooq 日线 CSV（兜底）：https://stooq.com/q/l/?s=purr.us&f=sd2t2ohlcv&h&e=csv
+ * 2026-11-01 实测：该端点对任意代码（含 AAPL）均返回错误页，取不到数；
+ * 保留严格校验的尝试，取不到返回 null。
+ */
+async function fetchPurrCloseStooq(): Promise<PurrClose | null> {
   try {
     const r = await fetch(
       "https://stooq.com/q/l/?s=purr.us&f=sd2t2ohlcv&h&e=csv",
@@ -327,6 +380,19 @@ async function fetchPurrClose(): Promise<{
   } catch {
     return null;
   }
+}
+
+/** PURR 最近收盘价：Yahoo Finance 优先（双主机），失败再试 Stooq，都取不到返回 null */
+async function fetchPurrClose(): Promise<PurrClose | null> {
+  for (const host of ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]) {
+    try {
+      const v = await fetchPurrCloseYahoo(host);
+      if (v) return v;
+    } catch {
+      /* 换下一个来源 */
+    }
+  }
+  return fetchPurrCloseStooq();
 }
 
 /* ---------------- 组装 ---------------- */

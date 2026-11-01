@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { HypeMarketData } from "@/lib/types";
 import { presetRange, lvForRange, type RangeSel } from "@/lib/range";
 import { FAQ_HYPE_EN, FAQ_HYPE_ZH } from "@/lib/faq-hype";
@@ -19,11 +19,11 @@ interface HypeSettings {
   purrPrice: string;
 }
 const DEFAULT_SETTINGS: HypeSettings = {
-  holdings: "38800000", // 38.8M HYPE（公司看板口径，2026-10-22）
-  shares: "301100000", // 完全摊薄 301.1M 股（公司看板口径，2026-10-22）
+  holdings: "38900000", // 38.9M HYPE（公司看板口径，2026-10-29；看板原值 38.85M）
+  shares: "302700000", // 完全摊薄 302.7M 股（公司看板口径，2026-10-29；看板按库藏股法随股价计算，$11.01 时为 302.66M）
   cash: "132600000", // $132.6M（2026-08-19）
   deferredTax: "194000000", // 递延税负债约 $194M；公司无有息负债
-  purrPrice: "11.01", // 纳斯达克收盘价（2026-10-30），可编辑
+  purrPrice: "11.01", // 手动兜底值 = 纳斯达克收盘价（2026-10-30）；服务端 Yahoo 取价成功且未手动改过时以接口价为准
 };
 /** 预填的 PURR 收盘价日期（与 DEFAULT_SETTINGS.purrPrice 对应） */
 const PREFILL_CLOSE_DATE = "2026-10-30";
@@ -39,8 +39,8 @@ export default function HypeCalculator(props: {
 
   const [settings, setSettings] = useState<HypeSettings>(DEFAULT_SETTINGS);
   const [editOpen, setEditOpen] = useState(false);
-  const savedFound = useRef(false);
-  const apiPriceApplied = useRef(false);
+  /** PURR 股价字段是否被用户手动改过（改过则以手动值为准，不再用接口收盘价） */
+  const [purrEdited, setPurrEdited] = useState(false);
 
   const [unified, setUnified] = useState<RangeSel>(presetRange(5));
   const [poolRanges, setPoolRanges] = useState<Record<string, RangeSel>>({});
@@ -74,8 +74,14 @@ export default function HypeCalculator(props: {
     try {
       const raw = localStorage.getItem("hype-settings");
       if (raw) {
-        savedFound.current = true;
-        setSettings({ ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as HypeSettings) });
+        const merged = {
+          ...DEFAULT_SETTINGS,
+          ...(JSON.parse(raw) as HypeSettings),
+        };
+        setSettings(merged);
+        // 历史保存的股价与默认预填不同，视为用户手动改过
+        if (merged.purrPrice !== DEFAULT_SETTINGS.purrPrice)
+          setPurrEdited(true);
       }
     } catch {
       /* 忽略损坏的本地设置 */
@@ -90,18 +96,6 @@ export default function HypeCalculator(props: {
     }
   }, [settings]);
 
-  // Stooq 若取到更新的收盘价且用户未保存过自定义设置，用它种子化 PURR 股价字段（仅一次）
-  useEffect(() => {
-    if (
-      data?.purrCloseUsd &&
-      !savedFound.current &&
-      !apiPriceApplied.current
-    ) {
-      apiPriceApplied.current = true;
-      setSettings((s) => ({ ...s, purrPrice: String(data.purrCloseUsd) }));
-    }
-  }, [data]);
-
   const rangeOf = useCallback(
     (key: string): RangeSel => poolRanges[key] ?? unified,
     [poolRanges, unified],
@@ -115,11 +109,20 @@ export default function HypeCalculator(props: {
   const shares = parseNum(settings.shares);
   const cash = parseNum(settings.cash);
   const deferredTax = parseNum(settings.deferredTax);
-  const purrPrice = parseNum(settings.purrPrice);
-  const purrDate =
-    apiPriceApplied.current && data?.purrCloseDate
-      ? data.purrCloseDate
+  const manualPurr = parseNum(settings.purrPrice);
+  const apiClose = data?.purrCloseUsd ?? null;
+  // 股价来源状态：未手动改过且接口（Yahoo Finance）取到最近收盘价 → 用接口价；
+  // 接口失败或用户手动改过 → 用手动字段值，并如实标注。
+  const useApiPrice = !purrEdited && apiClose !== null;
+  const purrPrice = useApiPrice ? apiClose : manualPurr;
+  const purrDate = useApiPrice
+    ? (data?.purrCloseDate ?? null)
+    : purrEdited
+      ? null
       : PREFILL_CLOSE_DATE;
+  const spreadStockLabel = purrDate
+    ? t.spreadStockPricePurr(purrDate)
+    : t.spreadStockPricePurrManual;
 
   const hero = useMemo(() => {
     if (!data || shares <= 0) return null;
@@ -220,7 +223,7 @@ export default function HypeCalculator(props: {
             <SpreadCard
               coinValue={hero.perShareUsd}
               stockPrice={purrPrice > 0 ? purrPrice : null}
-              stockLabel={t.spreadStockPricePurr(purrDate)}
+              stockLabel={spreadStockLabel}
               t={t}
             />
             <div className="formula">
@@ -265,7 +268,7 @@ export default function HypeCalculator(props: {
                 <div className="k">{t.statBnbPrice}</div>
                 <div className="v">
                   {purrPrice > 0 ? fmtUsd(purrPrice) : "—"}
-                  <small> {purrDate}</small>
+                  <small> {purrDate ?? t.purrManualTag}</small>
                 </div>
               </div>
             </div>
@@ -333,9 +336,10 @@ export default function HypeCalculator(props: {
                   <input
                     value={settings.purrPrice}
                     inputMode="decimal"
-                    onChange={(e) =>
-                      setSettings({ ...settings, purrPrice: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setPurrEdited(true);
+                      setSettings({ ...settings, purrPrice: e.target.value });
+                    }}
                   />
                 </div>
               </div>

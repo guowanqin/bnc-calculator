@@ -47,7 +47,7 @@ export interface HypeMarketData {
   source: string;
   /** HYPE 实时价（美元，GT hyperevm 网络 WHYPE 价） */
   hypePriceUsd: number | null;
-  /** PURR 纳斯达克收盘价（Stooq 取到时才有；取不到为 null，页面用可编辑字段） */
+  /** PURR 纳斯达克最近收盘价（服务端经 Yahoo Finance 获取，Stooq 兜底；取不到为 null，页面改用可编辑字段） */
   purrCloseUsd: number | null;
   /** PURR 收盘价对应的交易日期（YYYY-MM-DD） */
   purrCloseDate: string | null;

@@ -42,7 +42,15 @@ export function SpreadCard(props: {
       : null;
   const kind =
     pct === null ? "na" : pct > 0.05 ? "disc" : pct < -0.05 ? "prem" : "par";
-  const fmtSigned = (n: number) => (n < 0 ? "−" + fmtUsd(-n) : fmtUsd(n));
+  /** 大字：方向词 + 绝对值金额（金额与百分比一律绝对值，方向只由词 + 颜色承担） */
+  const bigText =
+    spread === null
+      ? "—"
+      : kind === "disc"
+        ? `${t.spreadWordDisc} ${fmtUsd(Math.abs(spread))}`
+        : kind === "prem"
+          ? `${t.spreadWordPrem} ${fmtUsd(Math.abs(spread))}`
+          : `${t.spreadAtPar} ${fmtUsd(Math.abs(spread))}`;
   return (
     <div className={`spread-card spread-${kind}`}>
       <div className="spread-title">{t.spreadTitle}</div>
@@ -66,24 +74,22 @@ export function SpreadCard(props: {
         <div className="spread-term">
           <div className="spread-k">{t.spreadResult}</div>
           <div className="spread-v spread-big">
-            {spread !== null ? fmtSigned(spread) : "—"}
-            <small>{t.usdPerShareUnit}</small>
+            {bigText}
+            {spread !== null && <small>{t.usdPerShareUnit}</small>}
             {pct !== null && kind === "disc" && (
               <span className="spread-badge badge-disc">
-                {t.discount(Math.abs(pct).toFixed(1))}
+                {t.spreadDiscRate(Math.abs(pct).toFixed(1))}
               </span>
             )}
             {pct !== null && kind === "prem" && (
               <span className="spread-badge badge-prem">
-                {t.premium(Math.abs(pct).toFixed(1))}
+                {t.spreadPremRate(Math.abs(pct).toFixed(1))}
               </span>
-            )}
-            {pct !== null && kind === "par" && (
-              <span className="spread-badge badge-par">{t.spreadAtPar}</span>
             )}
           </div>
         </div>
       </div>
+      <p className="spread-legend">{t.spreadLegend}</p>
       <p className="spread-note">{t.spreadNote}</p>
     </div>
   );

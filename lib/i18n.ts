@@ -53,6 +53,14 @@ export interface Dict {
   spreadResult: string;
   spreadAtPar: string;
   spreadNote: string;
+  /** 价差大字方向词（金额一律绝对值，方向只由词 + 颜色承担） */
+  spreadWordDisc: string;
+  spreadWordPrem: string;
+  /** 价差徽标：折价率 / 溢价率（百分比一律绝对值） */
+  spreadDiscRate: (p: string) => string;
+  spreadPremRate: (p: string) => string;
+  /** 价差卡图例行 */
+  spreadLegend: string;
   editOpen: string;
   editClose: string;
   fieldHoldings: string;
@@ -123,6 +131,11 @@ export const DICT: Record<Lang, Dict> = {
     spreadAtPar: "平价",
     spreadNote:
       "价差为含币价与股价的账面差额；财库公司股票不可按含币量赎回，折价不等于无风险套利。",
+    spreadWordDisc: "折价",
+    spreadWordPrem: "溢价",
+    spreadDiscRate: (p) => `折价率 ${p}%`,
+    spreadPremRate: (p) => `溢价率 ${p}%`,
+    spreadLegend: "折价＝股价低于每股含币价值；溢价＝股价高于每股含币价值。",
     editOpen: "编辑披露数据（持仓 / 股数 / 负债）",
     editClose: "收起",
     fieldHoldings: "BNB 持仓（枚，公司披露）",
@@ -197,6 +210,12 @@ export const DICT: Record<Lang, Dict> = {
     spreadAtPar: "At par",
     spreadNote:
       "The spread is the book difference between the coin value per share and the share price; treasury-company shares cannot be redeemed for the underlying coins, so a discount is not a risk-free arbitrage.",
+    spreadWordDisc: "Discount",
+    spreadWordPrem: "Premium",
+    spreadDiscRate: (p) => `Discount rate ${p}%`,
+    spreadPremRate: (p) => `Premium rate ${p}%`,
+    spreadLegend:
+      "Discount = the share price is below the coin value per share; premium = the share price is above the coin value per share.",
     editOpen: "Edit disclosed figures (holdings / shares / liabilities)",
     editClose: "Collapse",
     fieldHoldings: "BNB holdings (company-disclosed)",
