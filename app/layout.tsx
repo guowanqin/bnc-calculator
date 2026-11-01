@@ -1,41 +1,53 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { FAQ_ITEMS } from "@/lib/faq";
+import { FAQ_ITEMS_EN, FAQ_ITEMS_ZH } from "@/lib/faq";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/i18n";
 
 // TODO: 上线后把占位域名换成正式域名
 const SITE_URL = "https://example.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "BNC 每股含币量计算器｜BNCB 池子年化收益率实时查询",
-  description:
-    "实时计算 BNB Standard Corp（Nasdaq: BNC）每股含 BNB 数量（基本口径），并查询 BNCB 在 PancakeSwap V3 与 Uniswap V4 流动性池的年化收益率，支持全区间与自定义价格区间换算、LP 收益测算。",
+  title: SITE_TITLE.zh,
+  description: SITE_DESCRIPTION.zh,
   keywords: [
-    "BNC",
-    "BNCB",
-    "BNB Standard",
+    // 主关键词
     "每股含币量",
+    "BNC 财库公司",
+    // 副关键词
+    "财库公司",
+    "BNB 财库",
+    "数字资产财库公司",
+    "DAT",
+    "BNCB",
+    "BNCB 池子年化收益率",
+    "mNAV",
+    "BNB Standard",
+    // 英文与补充
+    "BNC",
+    "crypto per share",
+    "BNB treasury company",
+    "digital asset treasury company",
+    "BNCB pool APY",
     "每股含 BNB",
-    "池子年化",
-    "流动性池收益率",
     "PancakeSwap",
     "Uniswap V4",
-    "BNB 财库公司",
   ],
   openGraph: {
     type: "website",
     locale: "zh_CN",
+    alternateLocale: ["en_US"],
     url: SITE_URL + "/",
     siteName: "BNC 每股含币量计算器",
-    title: "BNC 每股含币量计算器｜BNCB 池子年化收益率",
+    title: SITE_TITLE.zh,
     description:
-      "BNC 每股含多少 BNB？BNCB 池子年化多少？实时数据一目了然，区间可自定义换算。",
+      "BNC 每股含多少 BNB？BNCB 池子年化多少？财库公司持仓与池子收益率实时数据一目了然，区间可自定义换算。",
   },
   twitter: {
     card: "summary",
-    title: "BNC 每股含币量计算器｜BNCB 池子年化收益率",
+    title: SITE_TITLE.zh,
     description:
-      "实时计算 BNC 每股含 BNB（基本口径）与 BNCB 四个流动性池的区间年化收益率。",
+      "实时计算 BNC 财库公司每股含 BNB（基本口径）与 BNCB 四个流动性池的区间年化收益率。",
   },
   robots: { index: true, follow: true },
 };
@@ -49,14 +61,23 @@ const jsonLd = {
       url: SITE_URL + "/",
       applicationCategory: "FinanceApplication",
       operatingSystem: "Web",
-      inLanguage: "zh-CN",
-      description:
-        "实时计算 BNB Standard Corp（Nasdaq: BNC）每股含 BNB 数量（基本口径），并按全区间或自定义价格区间换算 BNCB 流动性池年化收益率。",
+      inLanguage: ["zh-CN", "en"],
+      description: SITE_DESCRIPTION.zh,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     },
     {
       "@type": "FAQPage",
-      mainEntity: FAQ_ITEMS.map((f) => ({
+      inLanguage: "zh-CN",
+      mainEntity: FAQ_ITEMS_ZH.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      inLanguage: "en",
+      mainEntity: FAQ_ITEMS_EN.map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },

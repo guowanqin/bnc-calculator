@@ -10,10 +10,12 @@ import {
   lvForRange,
   type RangeSel,
 } from "@/lib/range";
-import { FAQ_ITEMS } from "@/lib/faq";
+import { FAQ_ITEMS_EN, FAQ_ITEMS_ZH } from "@/lib/faq";
+import { DICT, SITE_TITLE, type Dict, type Lang } from "@/lib/i18n";
 
 /* ---------------- 格式化 ---------------- */
-const fmtInt = (n: number) => new Intl.NumberFormat("zh-CN").format(Math.round(n));
+const fmtInt = (n: number, locale: string) =>
+  new Intl.NumberFormat(locale).format(Math.round(n));
 const fmtUsd = (n: number, d = 2) =>
   "$" + n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtUsd0 = (n: number) => {
@@ -34,8 +36,9 @@ function RangeControl(props: {
   label: string;
   sel: RangeSel;
   onChange: (s: RangeSel) => void;
+  t: Dict;
 }) {
-  const { sel, onChange } = props;
+  const { sel, onChange, t } = props;
   const [customOpen, setCustomOpen] = useState(false);
   const customActive = customOpen || (!sel.full && !isPreset(sel));
 
@@ -64,7 +67,7 @@ function RangeControl(props: {
             onChange(FULL_RANGE);
           }}
         >
-          全区间
+          {t.fullRange}
         </button>
         {PRESET_PCTS.map((p) => (
           <button
@@ -86,14 +89,14 @@ function RangeControl(props: {
           className={"chip-btn" + (customActive && !sel.full ? " on" : "")}
           onClick={openCustom}
         >
-          自定义
+          {t.custom}
         </button>
       </div>
       {customActive && !sel.full && (
         <div className="custom-box">
           <div className="slider-row">
             <label>
-              <span>下限：当前价下方</span>
+              <span>{t.downLabel}</span>
               <span className="numin">
                 −
                 <input
@@ -117,7 +120,7 @@ function RangeControl(props: {
           </div>
           <div className="slider-row">
             <label>
-              <span>上限：当前价上方</span>
+              <span>{t.upLabel}</span>
               <span className="numin">
                 +
                 <input
@@ -150,8 +153,9 @@ function PoolCard(props: {
   pool: PoolMarket;
   sel: RangeSel;
   onRangeChange: (s: RangeSel) => void;
+  t: Dict;
 }) {
-  const { pool, sel } = props;
+  const { pool, sel, t } = props;
   const res =
     pool.rangeBasis && pool.annualFeesUsd !== null && pool.priceUsd !== null
       ? rangeAprFor(pool.annualFeesUsd, pool.priceUsd, pool.rangeBasis, sel)
@@ -160,24 +164,22 @@ function PoolCard(props: {
   const headline = res ? res.apr : pool.poolAverageApr;
   const headlineLabel = res
     ? sel.full
-      ? "全区间在价内年化"
-      : `区间 −${sel.down}% ~ +${sel.up}% · 在价内年化`
-    : "全池平均年化（链上读数暂不可用）";
+      ? t.headlineFull
+      : t.headlineRange(sel.down, sel.up)
+    : t.headlineAvgFallback;
 
   return (
     <div className="pool-card">
       <div className="pool-head">
         <span className="pair">{pool.pair}</span>
         <span className="dex">{pool.dex}</span>
-        <span className="fee">费率 {pool.feePercent}%</span>
+        <span className="fee">{t.feeRate(pool.feePercent)}</span>
       </div>
 
       <div className="pool-apr">{fmtPct(headline)}</div>
       <div className="pool-apr-label">{headlineLabel}</div>
       {res && pool.poolAverageApr !== null && (
-        <div className="pool-avg">
-          全池平均 {fmtPct(pool.poolAverageApr)}（对照口径，非全区间收益）
-        </div>
+        <div className="pool-avg">{t.poolAvgLine(fmtPct(pool.poolAverageApr))}</div>
       )}
 
       <div className="pool-meta">
@@ -186,15 +188,15 @@ function PoolCard(props: {
           <b>{pool.tvlUsd !== null ? fmtUsd0(pool.tvlUsd) : "—"}</b>
         </div>
         <div className="row">
-          <span className="k">24h 成交量</span>
+          <span className="k">{t.vol24h}</span>
           <b>{pool.volume24hUsd !== null ? fmtUsd0(pool.volume24hUsd) : "—"}</b>
         </div>
         <div className="row">
-          <span className="k">年化手续费</span>
+          <span className="k">{t.annualFees}</span>
           <b>{pool.annualFeesUsd !== null ? fmtUsd0(pool.annualFeesUsd) : "—"}</b>
         </div>
         <div className="row">
-          <span className="k">BNCB 现价</span>
+          <span className="k">{t.bncbSpot}</span>
           <b>{pool.priceUsd !== null ? fmtPrice(pool.priceUsd) : "—"}</b>
         </div>
       </div>
@@ -204,28 +206,30 @@ function PoolCard(props: {
           <div className="band-line">
             {sel.full ? (
               <>
-                价格带：<b>全价格范围</b> · 资金效率 <b>1.0×</b>（基准）
+                {t.bandLabel}
+                <b>{t.fullPriceRangeText}</b> · {t.effLabel} <b>1.0×</b>（
+                {t.baselineNote}）
               </>
             ) : (
               <>
-                价格带：<b>{fmtPrice(res.bandLowUsd)}</b> –{" "}
+                {t.bandLabel}
+                <b>{fmtPrice(res.bandLowUsd)}</b> –{" "}
                 <b>{res.bandHighUsd !== null ? fmtPrice(res.bandHighUsd) : "∞"}</b>{" "}
-                · 资金效率 ≈ <b>{res.efficiency.toFixed(1)}×</b>
+                · {t.effLabel} ≈ <b>{res.efficiency.toFixed(1)}×</b>
               </>
             )}
           </div>
           {!sel.full && (
-            <div className="warn-line">
-              ⚠ 价格走出该区间后手续费收益归零；真实年化需乘上价格停留在区间内的时间占比。
-            </div>
+            <div className="warn-line">⚠ {t.warnOutOfRange}</div>
           )}
         </>
       )}
 
       <RangeControl
-        label="本池价格区间（只改这个池）"
+        label={t.poolRangeLabel}
         sel={sel}
         onChange={props.onRangeChange}
+        t={t}
       />
     </div>
   );
@@ -258,6 +262,37 @@ export default function Calculator() {
   const [lpPoolKey, setLpPoolKey] = useState("uni-usdt-0025");
   const [lpAmount, setLpAmount] = useState("10000");
 
+  /* ---------- 语言：localStorage 记忆，首次按浏览器语言 ---------- */
+  const [lang, setLang] = useState<Lang>("zh");
+  const t = DICT[lang];
+  const locale = lang === "en" ? "en-US" : "zh-CN";
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("bnc-lang");
+      if (saved === "zh" || saved === "en") {
+        setLang(saved);
+      } else if (
+        typeof navigator !== "undefined" &&
+        navigator.language.toLowerCase().startsWith("en")
+      ) {
+        setLang("en");
+      }
+    } catch {
+      /* 忽略 */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("bnc-lang", lang);
+    } catch {
+      /* 忽略 */
+    }
+    document.title = SITE_TITLE[lang];
+    document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+  }, [lang]);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -267,7 +302,7 @@ export default function Calculator() {
       setData(j);
       setError(null);
     } catch {
-      setError("行情拉取失败，请点刷新重试。");
+      setError("fetch-failed");
     } finally {
       setLoading(false);
     }
@@ -348,74 +383,94 @@ export default function Calculator() {
     return { pool, sel, daily, yearly, share };
   }, [data, lpPoolKey, lpAmount, rangeOf]);
 
+  const errorText = error ? t.fetchError : null;
+  const faqItems = lang === "en" ? FAQ_ITEMS_EN : FAQ_ITEMS_ZH;
+
   return (
     <main className="page">
       <div className="topbar">
         <span className="brand">BNC CALCULATOR</span>
         <span className="updated">
           {data
-            ? `数据更新于 ${new Date(data.fetchedAt).toLocaleString("zh-CN", { hour12: false })} · 来源 ${data.source}`
-            : "正在拉取实时行情…"}
+            ? t.updatedAt(
+                new Date(data.fetchedAt).toLocaleString(locale, { hour12: false }),
+                data.source,
+              )
+            : t.loadingMarket}
+        </span>
+        <span className="lang-switch" role="group" aria-label="Language">
+          <button
+            type="button"
+            className={lang === "zh" ? "on" : ""}
+            onClick={() => setLang("zh")}
+          >
+            中文
+          </button>
+          <button
+            type="button"
+            className={lang === "en" ? "on" : ""}
+            onClick={() => setLang("en")}
+          >
+            EN
+          </button>
         </span>
         <button type="button" className="btn" onClick={load} disabled={loading}>
-          {loading ? "刷新中…" : "刷新"}
+          {loading ? t.refreshing : t.refresh}
         </button>
       </div>
 
       {/* ---------- 板块一：美股含币量 ---------- */}
       <section className="hero">
-        <h1>BNC 每股含币量 · BNB Standard Corp</h1>
-        <p className="sub">
-          纳斯达克上市的 BNB 财库公司（Nasdaq: BNC）· 本页只按基本口径计算
-        </p>
+        <h1>{t.heroTitle}</h1>
+        <p className="sub">{t.heroSub}</p>
 
         {hero && data ? (
           <>
             <div className="hero-main">
               <div className="hero-num">
                 {hero.perShare.toFixed(6)}
-                <small>BNB / 股</small>
+                <small>{t.perShareUnit}</small>
               </div>
               <div className="hero-usd">
                 ≈ {hero.perShareUsd !== null ? fmtUsd(hero.perShareUsd) : "—"}
-                <span> / 股（按 BNB 实时价）</span>
+                <span>{t.perShareUsdSuffix}</span>
               </div>
             </div>
             <div className="formula">
-              <span>每股含 BNB =</span>
-              <span className="chip">持仓 {fmtInt(holdings)} BNB</span>
+              <span>{t.formulaLabel}</span>
+              <span className="chip">{t.formulaHoldings(fmtInt(holdings, locale))}</span>
               <span>÷</span>
-              <span className="chip">基本股数 {fmtInt(shares)} 股</span>
+              <span className="chip">{t.formulaShares(fmtInt(shares, locale))}</span>
             </div>
             <div className="stat-grid">
               <div className="stat">
-                <div className="k">调整后 NAV / 股（扣负债）</div>
+                <div className="k">{t.statAdjNav}</div>
                 <div className="v">
                   {hero.adjNav !== null ? fmtUsd(hero.adjNav) : "—"}
                 </div>
               </div>
               <div className="stat">
-                <div className="k">mNAV（BNCB 价 ÷ 调整后 NAV）</div>
+                <div className="k">{t.statMnav}</div>
                 <div className="v">
                   {hero.mnav !== null ? hero.mnav.toFixed(2) + "×" : "—"}
                   {hero.mnav !== null && (
                     <small>
                       {" "}
                       {hero.mnav < 1
-                        ? `折价 ${((1 - hero.mnav) * 100).toFixed(1)}%`
-                        : `溢价 ${((hero.mnav - 1) * 100).toFixed(1)}%`}
+                        ? t.discount(((1 - hero.mnav) * 100).toFixed(1))
+                        : t.premium(((hero.mnav - 1) * 100).toFixed(1))}
                     </small>
                   )}
                 </div>
               </div>
               <div className="stat">
-                <div className="k">BNCB 价格（代币化 BNC）</div>
+                <div className="k">{t.statBncbPrice}</div>
                 <div className="v">
                   {data.bncbPriceUsd !== null ? fmtPrice(data.bncbPriceUsd) : "—"}
                 </div>
               </div>
               <div className="stat">
-                <div className="k">BNB 价格</div>
+                <div className="k">{t.statBnbPrice}</div>
                 <div className="v">
                   {data.bnbPriceUsd !== null ? fmtUsd(data.bnbPriceUsd) : "—"}
                 </div>
@@ -423,8 +478,8 @@ export default function Calculator() {
             </div>
           </>
         ) : (
-          <div className={error ? "error-box" : "loading"}>
-            {error ?? "正在拉取实时行情…"}
+          <div className={errorText ? "error-box" : "loading"}>
+            {errorText ?? t.loadingMarket}
           </div>
         )}
 
@@ -434,13 +489,13 @@ export default function Calculator() {
             className="btn"
             onClick={() => setEditOpen((v) => !v)}
           >
-            {editOpen ? "收起" : "编辑披露数据（持仓 / 股数 / 负债）"}
+            {editOpen ? t.editClose : t.editOpen}
           </button>
           {editOpen && (
             <>
               <div className="edit-grid" style={{ marginTop: 12 }}>
                 <div className="field">
-                  <label>BNB 持仓（枚，公司披露）</label>
+                  <label>{t.fieldHoldings}</label>
                   <input
                     value={settings.holdings}
                     inputMode="decimal"
@@ -450,7 +505,7 @@ export default function Calculator() {
                   />
                 </div>
                 <div className="field">
-                  <label>基本股数（股，公司披露）</label>
+                  <label>{t.fieldShares}</label>
                   <input
                     value={settings.shares}
                     inputMode="decimal"
@@ -460,7 +515,7 @@ export default function Calculator() {
                   />
                 </div>
                 <div className="field">
-                  <label>负债（美元，调整后 NAV 扣除项）</label>
+                  <label>{t.fieldLiabilities}</label>
                   <input
                     value={settings.liabilities}
                     inputMode="decimal"
@@ -470,30 +525,24 @@ export default function Calculator() {
                   />
                 </div>
               </div>
-              <p className="hint">
-                默认值：持仓 515,544 枚 BNB、基本股数 41,173,850 股（公司 2026
-                年披露）、负债约 $16.8M（2026-07-31
-                披露口径）。修改后立即按基本口径重算，并保存在本机浏览器。
-              </p>
+              <p className="hint">{t.editHint}</p>
             </>
           )}
         </div>
       </section>
 
       {/* ---------- 板块二：池子年化 ---------- */}
-      <h2 className="section-title">BNCB 池子年化收益率</h2>
-      <p className="section-sub">
-        默认显示「全区间在价内年化」：按链上当前有效流动性换算的实际年化，与卡片小字的「全池平均」不是一回事（全池平均
-        = 24h 成交量 × 费率 × 365 ÷ TVL）。先用下方统一设置给所有池子选区间，也可以逐张卡片单独改。
-      </p>
+      <h2 className="section-title">{t.poolsTitle}</h2>
+      <p className="section-sub">{t.poolsSub}</p>
 
       {data ? (
         <>
           <div className="panel">
             <RangeControl
-              label="统一区间设置（应用到所有池子）"
+              label={t.unifiedLabel}
               sel={unified}
               onChange={applyUnified}
+              t={t}
             />
           </div>
           <div className="pool-grid">
@@ -505,29 +554,30 @@ export default function Calculator() {
                 onRangeChange={(s) =>
                   setPoolRanges((prev) => ({ ...prev, [pool.key]: s }))
                 }
+                t={t}
               />
             ))}
           </div>
 
           {/* ---------- LP 测算器 ---------- */}
-          <h2 className="section-title">LP 收益测算</h2>
+          <h2 className="section-title">{t.lpTitle}</h2>
           <div className="panel">
             <div className="lp-grid">
               <div className="field">
-                <label>选择池子</label>
+                <label>{t.lpSelectPool}</label>
                 <select
                   value={lp?.pool.key ?? lpPoolKey}
                   onChange={(e) => setLpPoolKey(e.target.value)}
                 >
                   {data.pools.map((p) => (
                     <option key={p.key} value={p.key}>
-                      {p.pair} · {p.dex} · 费率 {p.feePercent}%
+                      {p.pair} · {p.dex} · {t.feeRate(p.feePercent)}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="field">
-                <label>投入金额（美元）</label>
+                <label>{t.lpAmount}</label>
                 <input
                   value={lpAmount}
                   inputMode="decimal"
@@ -535,33 +585,33 @@ export default function Calculator() {
                 />
               </div>
               <div className="field">
-                <label>采用区间</label>
+                <label>{t.lpRangeUsed}</label>
                 <div style={{ fontSize: 14, padding: "8px 0" }}>
                   {lp
                     ? lp.sel.full
-                      ? "全区间"
+                      ? t.fullRange
                       : `−${lp.sel.down}% ~ +${lp.sel.up}%`
                     : "—"}
-                  （跟随该池卡片当前的区间设置）
+                  {t.lpRangeNote}
                 </div>
               </div>
             </div>
             {lp && (
               <div className="lp-result">
                 <div className="stat">
-                  <div className="k">估算日手续费收入</div>
+                  <div className="k">{t.lpDaily}</div>
                   <div className="v">
                     {lp.daily !== null ? fmtUsd(lp.daily) : "—"}
                   </div>
                 </div>
                 <div className="stat">
-                  <div className="k">估算年手续费收入</div>
+                  <div className="k">{t.lpYearly}</div>
                   <div className="v">
                     {lp.yearly !== null ? fmtUsd(lp.yearly) : "—"}
                   </div>
                 </div>
                 <div className="stat">
-                  <div className="k">占池有效流动性份额</div>
+                  <div className="k">{t.lpShare}</div>
                   <div className="v">
                     {lp.share !== null
                       ? (lp.share * 100).toFixed(3) + "%"
@@ -570,24 +620,22 @@ export default function Calculator() {
                 </div>
               </div>
             )}
-            <p className="hint">
-              按价格停留在所选区间内估算，未计无常损失与滑点；价格出区间期间收入为 0，实际收益低于此估算。
-            </p>
+            <p className="hint">{t.lpHint}</p>
           </div>
         </>
       ) : (
-        !error && <div className="loading">正在拉取池子数据…</div>
+        !errorText && <div className="loading">{t.loadingPools}</div>
       )}
-      {error && !data && (
+      {errorText && !data && (
         <div className="error-box" style={{ marginTop: 12 }}>
-          {error}
+          {errorText}
         </div>
       )}
 
       {/* ---------- FAQ ---------- */}
-      <h2 className="section-title">常见问题</h2>
+      <h2 className="section-title">{t.faqTitle}</h2>
       <div>
-        {FAQ_ITEMS.map((f) => (
+        {faqItems.map((f) => (
           <div className="faq-item" key={f.q}>
             <h3>{f.q}</h3>
             <p>{f.a}</p>
@@ -596,14 +644,8 @@ export default function Calculator() {
       </div>
 
       <footer className="footer">
-        <div>
-          数据来源：GeckoTerminal / DexScreener 行情与 BSC
-          链上读数（PancakeSwap V3 池合约、Uniswap V4 StateView），服务端缓存约
-          5 分钟。官方 BNCB 合约：0x4902C5ebc598265Ed2212b559B042De8a5Eeec3f，请警惕同名假币。
-        </div>
-        <div>
-          口径说明：区间年化为「价格停留在区间内」的理论值，未计无常损失；单日成交量年化波动极大。本页仅供信息参考，不构成投资建议。
-        </div>
+        <div>{t.footerSource}</div>
+        <div>{t.footerDisclaimer}</div>
       </footer>
     </main>
   );
